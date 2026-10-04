@@ -35,7 +35,7 @@ Client JavaScript is limited to four small scripts, each a progressive enhanceme
 | Mobile menu toggle | Nav links wrap below the logo |
 | Timetable day tabs (mobile only) | All seven days are listed in order |
 | Form validation messages | Native browser validation runs |
-| Motion (`src/scripts/motion.ts`) | Everything renders in place; no reveals, buoy stays still |
+| Motion (`src/scripts/motion.ts`) | Everything renders in place; no reveals, hero buoy stays still |
 
 ## Project structure
 
@@ -43,7 +43,7 @@ Client JavaScript is limited to four small scripts, each a progressive enhanceme
 src/
   data/site.ts         All page content: studio details, classes, timetable, teachers, pricing, FAQ
   lib/contours.ts      Depth-contour path generator used by both maps
-  scripts/motion.ts    Scroll-entry reveals and the off-screen pause for the buoy
+  scripts/motion.ts    Scroll-entry reveals and the off-screen pause for the hero buoy
   layouts/Base.astro   Document shell, SEO and Open Graph tags, font preloads
   pages/index.astro    Section order
   components/          One file per section, plus Avatar, MapMarker and PriceList
@@ -79,19 +79,23 @@ pnpm motion                 # screenshots/motion.webm, motion.gif, motion-frames
 
 ## Motion
 
-A few small movements, each run once, all transform and opacity only (no layout shift):
+A few small movements, each run once, all transform, opacity, stroke offset or background position (no layout shift):
 
 - **Depth contours** draw in on load, staggered from the centre outwards.
 - **Compass needle** swings past north and settles, alongside the contours.
 - **Buoy marker** in the hero rocks very slowly. This is the only loop; an `IntersectionObserver` stops it while the chart is off screen.
 - **Timetable sessions** fill in down each column, columns a beat apart, the first time the timetable scrolls into view.
 - **Intro ticket** in Pricing lifts and straightens into place once.
+- **Visit map** uses the hero chart's motion: the quayside draws in, the harbor contours follow, and the studio buoy drops in and settles, once, when the map scrolls into view.
+- **Primary CTAs** (the buoy-yellow buttons and the Pricing ticket button) get a soft light sweep on hover and keyboard focus. The hero's "Book your free class" sweeps once on its own after the chart has drawn. The focus outline and button colours are unchanged.
 
-The reveals never hide content that is already on screen: `motion.ts` only marks elements that are below the fold when it runs, and the hiding styles only match those marked elements. Without JavaScript, when printing, and under `prefers-reduced-motion: reduce`, nothing is marked and nothing moves; the contours and needle render in their final state. The timetable uses transitions rather than keyframes so switching day tabs on mobile does not replay it.
+The shared pieces live in `src/styles/global.css`: easing and draw-timing tokens, `.chart-draw` for stroke draw-ins (on load with `.chart-draw-now`, or on reveal), the `settle` keyframes used by both the compass needle and the Visit buoy, and the CTA sweep. `MapMarker` takes `motion="bob"` or `motion="settle"`.
 
-![Hero load, then the timetable and pricing reveals](screenshots/motion.gif)
+The reveals never hide content that is already on screen: `motion.ts` only marks elements that are below the fold when it runs, and the hiding styles only match those marked elements. Without JavaScript, when printing, and under `prefers-reduced-motion: reduce`, nothing is marked and nothing is hidden. Under reduced motion nothing moves at all, including the CTA sweep, and the charts render in their final state. Without JavaScript the CSS-only hero draw, needle and CTA sweep still play once. The timetable uses transitions rather than keyframes so switching day tabs on mobile does not replay it.
 
-`screenshots/motion-frames.png` samples the same sequence as stills; `motion.webm` is the full-quality recording.
+![Hero load, then the timetable, pricing and Visit map reveals, and a CTA hover](screenshots/motion.gif)
+
+`screenshots/motion-frames.png` samples the same sequence as stills (hero, timetable, Visit map, CTA hover); `motion.webm` is the full-quality recording.
 
 ## The booking form
 
@@ -106,7 +110,7 @@ Lighthouse 13.5.0 against `pnpm preview` on localhost, headless Chromium:
 | Mobile (default) | 100 | 100 | 100 | 66 |
 | Desktop preset | 100 | 100 | 100 | 66 |
 
-Mobile: FCP 0.9 s, LCP 1.4 s, TBT 0 ms, CLS 0. SEO is 66 on purpose: the only failing audit is "Page is blocked from indexing", caused by the noindex meta (see the top of this file). Before noindex was added, SEO scored 100. Scores from a local server will be higher than from a real host on a slow network.
+Mobile: FCP 1.0 s, LCP 1.4 s, TBT 0 ms, CLS 0. SEO is 66 on purpose: the only failing audit is "Page is blocked from indexing", caused by the noindex meta (see the top of this file). Before noindex was added, SEO scored 100. Scores from a local server will be higher than from a real host on a slow network.
 
 ## Accessibility
 
