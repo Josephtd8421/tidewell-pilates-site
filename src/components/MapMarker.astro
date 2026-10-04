@@ -10,12 +10,15 @@ interface Props {
   leader: string;
   labelX: number;
   labelY: number;
-  /** Let the buoy bob gently while on screen. Use on one marker per page at most. */
-  bob?: boolean;
+  /**
+   * bob: rock gently while on screen (motion.ts pauses it off screen).
+   * settle: drop in and swing to rest once, when an ancestor [data-reveal] turns "in".
+   */
+  motion?: 'bob' | 'settle';
 }
-const { x, y, r = 13, label, leader, labelX, labelY, bob = false } = Astro.props;
+const { x, y, r = 13, label, leader, labelX, labelY, motion } = Astro.props;
 ---
-<g class="map-marker" data-ambient={bob ? 'off' : undefined}>
+<g class="map-marker" data-ambient={motion === 'bob' ? 'off' : undefined} data-settle={motion === 'settle' || undefined}>
   <circle class="ring" cx={x} cy={y} r={r * 2} />
   <g class="float">
     <circle class="buoy" cx={x} cy={y} r={r} />
@@ -46,15 +49,26 @@ const { x, y, r = 13, label, leader, labelX, labelY, bob = false } = Astro.props
     stroke: var(--ink);
     stroke-width: 1.5;
   }
-  /* Slow enough to read as water, not as a loading indicator. Runs only while
-     motion.ts reports the marker on screen. */
+  /* Bob is slow enough to read as water, not as a loading indicator. Settle
+     uses the shared keyframes in global.css (as the hero compass needle does)
+     and starts once the map's contours are drawing. */
   .float {
     transform-box: fill-box;
     transform-origin: 50% 100%;
+    --settle-angle: -10deg;
+    --settle-lift: -8px;
   }
   @media (prefers-reduced-motion: no-preference) {
     [data-ambient='on'] .float {
       animation: buoy-bob 7s ease-in-out infinite;
+    }
+    :global([data-reveal='in']) [data-settle] .float {
+      animation: settle 1.6s var(--ease-settle) 0.5s both;
+    }
+  }
+  @media screen and (prefers-reduced-motion: no-preference) {
+    :global([data-reveal='pending']) [data-settle] .float {
+      transform: translateY(var(--settle-lift)) rotate(var(--settle-angle));
     }
   }
   @keyframes buoy-bob {

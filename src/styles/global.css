@@ -35,6 +35,12 @@
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
   --max: 76rem;
   --section: clamp(4rem, 3rem + 5vw, 7.5rem);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease-settle: cubic-bezier(0.25, 0.7, 0.3, 1);
+  --draw-duration: 2.2s;
+  --draw-step: 90ms;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -194,6 +200,53 @@ svg {
   top: 0;
 }
 
+/* Chart motion, shared by the hero chart and the Visit map.
+
+   .chart-draw: stroke paths (pathLength="1", optional --i for order) draw in.
+   Add .chart-draw-now to draw on load; otherwise they draw when an ancestor
+   [data-reveal] turns "in" (src/scripts/motion.ts).
+
+   settle: a damped swing to rest. Set --settle-angle (and optionally
+   --settle-lift) on the element; it overshoots by a quarter, then settles. */
+.chart-draw path {
+  stroke-dasharray: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chart-draw-now path,
+  [data-reveal='in'] .chart-draw path {
+    animation: chart-draw var(--draw-duration) cubic-bezier(0.3, 0.6, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * var(--draw-step));
+  }
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  [data-reveal='pending'] .chart-draw path {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes chart-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes settle {
+  0% {
+    transform: translateY(var(--settle-lift, 0)) rotate(var(--settle-angle));
+  }
+  45% {
+    transform: translateY(0) rotate(calc(var(--settle-angle) * -0.25));
+  }
+  72% {
+    transform: rotate(calc(var(--settle-angle) * 0.09));
+  }
+  100% {
+    transform: none;
+  }
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -220,6 +273,43 @@ svg {
 .btn-buoy:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 0 var(--on-buoy);
+}
+
+/* Primary CTAs: a soft light sweep on hover and keyboard focus. Moves only
+   background-position; the base colour and the focus outline are untouched.
+   The sweep transitions in on hover and snaps back unseen on leave. */
+@media (prefers-reduced-motion: no-preference) {
+  .btn-buoy,
+  .btn-ink {
+    background-image: linear-gradient(
+      105deg,
+      transparent 38%,
+      var(--shine, rgb(255 255 255 / 0.5)) 50%,
+      transparent 62%
+    );
+    background-size: 250% 100%;
+    background-position: 100% 0;
+    background-repeat: no-repeat;
+  }
+  .btn-buoy:hover,
+  .btn-buoy:focus-visible,
+  .btn-ink:hover,
+  .btn-ink:focus-visible {
+    background-position: 0 0;
+    transition:
+      transform 160ms ease,
+      background-color 160ms ease,
+      background-position 750ms var(--ease-out);
+  }
+}
+
+@keyframes cta-sweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
 }
 
 .btn-buoy:active {
