@@ -18,7 +18,7 @@ for (const [label, width, height, mobile] of [['1440', 1440, 900, false], ['390'
     ]);
     await page.goto(base, { waitUntil: 'networkidle0' });
     await page.evaluate(() => document.fonts.ready);
-    const path = `screenshots/harbor-${label}-${scheme}.png`;
+    const path = `screenshots/tidewell-${label}-${scheme}.png`;
     await page.screenshot({ path, fullPage: true });
     console.log('saved', path);
     await page.close();

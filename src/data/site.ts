@@ -1,12 +1,12 @@
 // All content below is invented for a portfolio sample.
-// Harbor Pilates and the town of Larkhaven do not exist.
+// Tidewell Pilates and the town of Larkhaven do not exist.
 
 export const studio = {
-  name: 'Harbor Pilates',
+  name: 'Tidewell Pilates',
   street: '14 Ropewalk Lane, upstairs',
   locality: 'Larkhaven Harbor',
   phone: { label: '(555) 014-2290', href: 'tel:+15550142290' },
-  email: 'hello@harborpilates.example',
+  email: 'hello@tidewellpilates.example',
 };
 
 /** Header shows links without `footerOnly`; the footer shows all of them. */

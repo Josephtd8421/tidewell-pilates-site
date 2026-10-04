@@ -1,10 +1,10 @@
-# Harbor Pilates
+# Tidewell Pilates
 
-A single-page marketing site for Harbor Pilates, a small reformer and mat studio in the harbor town of Larkhaven.
+A single-page marketing site for Tidewell Pilates, a small reformer and mat studio in the harbor town of Larkhaven.
 
-This is a portfolio sample by Joe Dymnioski. **Harbor Pilates, Larkhaven, the teachers, prices, reviews and contact details are all invented.** The phone number uses the 555 range and the email uses the reserved `.example` domain.
+This is a portfolio sample by Joe Dymnioski. **Tidewell Pilates, Larkhaven, the teachers, prices, reviews and contact details are all invented.** The phone number uses the 555 range and the email uses the reserved `.example` domain.
 
-![Desktop, light theme](screenshots/harbor-1440-light.png)
+![Desktop, light theme](screenshots/tidewell-1440-light.png)
 
 ## What's on the page
 
@@ -102,5 +102,5 @@ Mobile: FCP 0.9 s, LCP 1.4 s, TBT 0 ms, CLS 0. Scores from a local server will b
 
 - The form does not send anything (by design for a sample)
 - The timetable is static data; there is no live availability or booking system
-- `site` in `astro.config.mjs` is a placeholder domain, so canonical, sitemap and Open Graph URLs point to `harbor-pilates.example`
+- `site` in `astro.config.mjs` is a placeholder domain, so canonical, sitemap and Open Graph URLs point to `tidewell-pilates.example`
 - Automated checks are Lighthouse and `astro check`; there is no unit or end-to-end test suite
