@@ -20,7 +20,7 @@ const fmt = (t: string) => {
       {classTypes.map((c) => <li><span class="dot" style={`--k: ${c.swatch}`} aria-hidden="true"></span>{c.name}</li>)}
     </ul>
 
-    <div class="tt" data-tt>
+    <div class="tt" data-tt data-reveal>
       <div class="tabs" role="tablist" aria-label="Day of the week" hidden>
         {
           schedule.map((d) => (
@@ -34,14 +34,14 @@ const fmt = (t: string) => {
 
       <div class="days">
         {
-          schedule.map((d) => (
-            <section class="day" id={`day-${d.id}`} aria-labelledby={`h-${d.id}`}>
+          schedule.map((d, di) => (
+            <section class="day" id={`day-${d.id}`} aria-labelledby={`h-${d.id}`} style={`--d: ${di}`}>
               <h3 id={`h-${d.id}`}>{d.long}</h3>
               <ol>
-                {d.sessions.map((s) => {
+                {d.sessions.map((s, si) => {
                   const t = fmt(s.time);
                   return (
-                    <li style={`--k: ${byId[s.classId].swatch}`}>
+                    <li style={`--k: ${byId[s.classId].swatch}; --n: ${si}`}>
                       <time datetime={s.time.padStart(5, '0')}>
                         {t.label}
                         <small>{t.suffix}</small>
@@ -277,6 +277,28 @@ const fmt = (t: string) => {
       font-size: var(--step-0);
       font-family: var(--font-body);
       font-weight: 700;
+    }
+  }
+
+  /* Sessions fill in down each column, columns a beat apart, like a departure
+     board. Only ever applied below the fold; see src/scripts/motion.ts.
+     Transitions rather than keyframes so a mobile tab switch (display: none to
+     shown) does not replay it. */
+  @media screen and (prefers-reduced-motion: no-preference) {
+    .tt[data-reveal='pending'] .day li {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    .tt[data-reveal='in'] .day li {
+      transition:
+        opacity 420ms ease-out,
+        transform 420ms var(--ease-out);
+      transition-delay: calc(var(--d, 0) * 45ms + var(--n, 0) * 60ms);
+    }
+  }
+  @media screen and (max-width: 55.99rem) {
+    .day {
+      --d: 0;
     }
   }
 </style>

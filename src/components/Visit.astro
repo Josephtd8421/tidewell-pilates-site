@@ -38,13 +38,13 @@ const water = contours({ cx: 320, cy: 470, rings: 6, r0: 40, step: 34, squash: 0
       <p class="small">Closed on public holidays. Reception opens 30 minutes before the first class.</p>
     </div>
 
-    <figure class="map">
+    <figure class="map" data-reveal>
       <svg viewBox="0 0 640 520" role="img" aria-labelledby="map-title">
         <title id="map-title">Street map: the studio is at the harbor end of Ropewalk Lane, near the Quayside car park</title>
         <rect class="ground" width="640" height="520" />
         <path class="water" d="M0 360C90 340 150 372 230 352S380 300 460 320 580 360 640 340V520H0Z" />
         <clipPath id="bay"><path d="M0 360C90 340 150 372 230 352S380 300 460 320 580 360 640 340V520H0Z" /></clipPath>
-        <g clip-path="url(#bay)" class="wcontours">{water.map((d) => <path d={d} />)}</g>
+        <g clip-path="url(#bay)" class="wcontours chart-draw">{water.map((d, i) => <path d={d} pathLength="1" style={`--i:${i + 2}`} />)}</g>
 
         <!-- blocks -->
         <g class="blocks">
@@ -63,7 +63,9 @@ const water = contours({ cx: 320, cy: 470, rings: 6, r0: 40, step: 34, squash: 0
           <path d="M220 0V330" />
           <path d="M410 0V320" />
         </g>
-        <path class="quay" d="M0 335C90 318 150 345 230 328S380 280 460 298 580 336 640 316" />
+        <g class="chart-draw">
+          <path class="quay" d="M0 335C90 318 150 345 230 328S380 280 460 298 580 336 640 316" pathLength="1" />
+        </g>
         <path class="pier" d="M300 312V420M300 420H340" />
 
         <text class="street-label" x="70" y="164">Harbor Street</text>
@@ -71,7 +73,7 @@ const water = contours({ cx: 320, cy: 470, rings: 6, r0: 40, step: 34, squash: 0
         <text class="street-label" x="60" y="322">Quayside</text>
         <text class="water-label" x="400" y="450">Larkhaven Harbor</text>
 
-        <MapMarker x={410} y={290} r={15} label="Tidewell Pilates" leader="M428 270L440 242H600" labelX={440} labelY={232} />
+        <MapMarker x={410} y={290} r={15} label="Tidewell Pilates" leader="M428 270L440 242H600" labelX={440} labelY={232} motion="settle" />
       </svg>
       <figcaption class="small">Illustrated map, not to scale.</figcaption>
     </figure>
@@ -204,5 +206,11 @@ const water = contours({ cx: 320, cy: 470, rings: 6, r0: 40, step: 34, squash: 0
     .map {
       --marker-label-size: 22px;
     }
+  }
+
+  /* Same draw as the hero chart, a touch quicker: the coastline first, then
+     the soundings ring out from it. */
+  .map {
+    --draw-duration: 1.8s;
   }
 </style>

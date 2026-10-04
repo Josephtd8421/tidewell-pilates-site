@@ -56,7 +56,7 @@ const soundings = [
         <rect class="sea" x="28" y="28" width={W - 56} height={H - 56} />
 
         <g clip-path="url(#sea)">
-          <g class="depth">
+          <g class="depth chart-draw chart-draw-now">
             {depth.map((d, i) => <path d={d} pathLength="1" style={`--i:${i}`} />)}
           </g>
 
@@ -86,7 +86,7 @@ const soundings = [
           <g class="compass" transform="translate(470 210)">
             <circle r="30" />
             <circle r="22" />
-            <path d="M0 -38L6 0L0 38L-6 0Z" />
+            <path class="needle" d="M0 -38L6 0L0 38L-6 0Z" />
             <text y="-44" text-anchor="middle">N</text>
           </g>
 
@@ -94,7 +94,7 @@ const soundings = [
           <text class="legend" x="516" y="578" text-anchor="end">Larkhaven Harbor, soundings in feet</text>
         </g>
 
-        <MapMarker x={206} y={172} label="Tidewell Pilates" leader="M226 158L262 116H404" labelX={270} labelY={108} />
+        <MapMarker x={206} y={172} label="Tidewell Pilates" leader="M226 158L262 116H404" labelX={270} labelY={108} motion="bob" />
 
         <rect class="frame" x="12" y="12" width={W - 24} height={H - 24} />
         <rect class="frame" x="28" y="28" width={W - 56} height={H - 56} />
@@ -179,19 +179,10 @@ const soundings = [
     stroke: var(--kelp);
     stroke-opacity: 0.55;
     stroke-width: 1.2;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
-    animation: draw 2.2s cubic-bezier(0.3, 0.6, 0.2, 1) both;
-    animation-delay: calc(var(--i) * 90ms);
   }
   .depth path:nth-child(3n) {
     stroke-width: 2;
     stroke-opacity: 0.75;
-  }
-  @keyframes draw {
-    from {
-      stroke-dashoffset: 1;
-    }
   }
   .land {
     fill: var(--land);
@@ -227,6 +218,19 @@ const soundings = [
   }
   .compass path {
     fill: var(--ink);
+  }
+  /* Needle swings past north and settles while the contours draw. Starts in
+     view, so it rotates rather than fades: nothing is hidden before paint. */
+  @media (prefers-reduced-motion: no-preference) {
+    .needle {
+      --settle-angle: -28deg;
+      animation: settle 1.8s var(--ease-settle) 0.3s both;
+    }
+    /* One sweep across the main CTA once the chart has mostly drawn. No fill
+       mode, so it hands back to the hover styles when done. */
+    .actions .btn-buoy {
+      animation: cta-sweep 1.1s var(--ease-out) 1.8s;
+    }
   }
   .compass text {
     font: 14px var(--font-display);
