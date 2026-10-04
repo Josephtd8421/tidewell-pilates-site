@@ -1,0 +1,136 @@
+---
+import { introOffer, classPacks, memberships } from '../data/site';
+import PriceList from './PriceList.astro';
+---
+<section id="pricing" class="section" aria-labelledby="pricing-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="pricing-title">Pricing</h2>
+      <p>Start free, then choose a pack or a monthly membership. Memberships are month to month with 30 days' notice to cancel.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="ticket">
+        <div class="ticket-main">
+          <h3>New to the studio</h3>
+          <dl>
+            <div>
+              <dt>Your first class</dt>
+              <dd class="big">{introOffer.firstClass}</dd>
+            </div>
+            <div>
+              <dt>Then your first month, unlimited</dt>
+              <dd class="big">{introOffer.introMonth}</dd>
+            </div>
+          </dl>
+          <a class="btn btn-ink" href="#book">Book your free class</a>
+        </div>
+        <p class="ticket-stub">{introOffer.terms}</p>
+      </div>
+
+      <div class="lists">
+        <PriceList title="Class packs" items={classPacks} />
+        <PriceList title="Monthly memberships" items={memberships} unit="/mo" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing-grid {
+    display: grid;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .pricing-grid {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 4rem;
+    }
+  }
+
+  /* Ferry-ticket style intro offer */
+  .ticket {
+    --notch: 14px;
+    --stub: 5.2rem;
+    background: var(--buoy);
+    color: var(--on-buoy);
+    border-radius: 10px;
+    position: relative;
+    -webkit-mask:
+      radial-gradient(circle var(--notch) at 0 calc(100% - var(--stub)), #0000 98%, #000) left / 51% 100% no-repeat,
+      radial-gradient(circle var(--notch) at 100% calc(100% - var(--stub)), #0000 98%, #000) right / 51% 100% no-repeat;
+    mask:
+      radial-gradient(circle var(--notch) at 0 calc(100% - var(--stub)), #0000 98%, #000) left / 51% 100% no-repeat,
+      radial-gradient(circle var(--notch) at 100% calc(100% - var(--stub)), #0000 98%, #000) right / 51% 100% no-repeat;
+  }
+
+  .ticket-main {
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+
+  .ticket h3 {
+    font-size: var(--step-2);
+  }
+
+  dl {
+    margin: 0;
+    display: grid;
+    gap: 1.25rem;
+    width: 100%;
+  }
+
+  dl div {
+    display: grid;
+    gap: 0.1rem;
+    border-top: 1.5px solid var(--on-buoy);
+    padding-top: 0.9rem;
+  }
+
+  dt {
+    font-weight: 700;
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .big {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 2.2rem + 3vw, 4.5rem);
+    line-height: 1;
+  }
+
+  .btn-ink {
+    background: var(--on-buoy);
+    color: #f2f6f4;
+  }
+
+  .btn-ink:hover {
+    background: #1d4157;
+  }
+
+  .btn-ink:focus-visible {
+    outline-color: var(--on-buoy);
+  }
+
+  .ticket-stub {
+    height: var(--stub);
+    display: flex;
+    align-items: center;
+    padding: 0 clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    border-top: 2px dashed var(--on-buoy);
+    font-size: var(--step--1);
+    line-height: 1.4;
+  }
+
+  .lists {
+    display: grid;
+    gap: 2.75rem;
+  }
+
+</style>

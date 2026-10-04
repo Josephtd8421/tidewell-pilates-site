@@ -1,0 +1,294 @@
+---
+import { classTypes, schedule } from '../data/site';
+---
+<section id="book" class="section book" aria-labelledby="book-title">
+  <div class="wrap book-grid">
+    <div class="pitch">
+      <h2 id="book-title">Book your free class</h2>
+      <p>
+        Tell us when suits you and we will reply within one working day with a confirmed spot. No card details
+        needed for the free class.
+      </p>
+      <ul class="steps">
+        <li>We confirm a class and send you the door code.</li>
+        <li>Arrive ten minutes early for a quick reformer walkthrough.</li>
+        <li>After class, decide whether you want the $99 intro month.</li>
+      </ul>
+    </div>
+
+    <form class="form" action="#" method="post" data-demo-form>
+      <div class="row two">
+        <div class="field">
+          <label for="f-name">Full name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-hint" />
+          <p class="hint" id="f-email-hint">We send the confirmation here.</p>
+        </div>
+      </div>
+
+      <div class="row two">
+        <div class="field">
+          <label for="f-class">Class</label>
+          <select id="f-class" name="class">
+            {classTypes.map((c) => <option value={c.id} selected={c.id === 'foundations'}>{c.name}</option>)}
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-day">Preferred day</label>
+          <select id="f-day" name="day">
+            <option value="any">Any day</option>
+            {schedule.map((d) => <option value={d.id}>{d.long}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>Have you done Pilates before?</legend>
+        <div class="choices">
+          <label><input type="radio" name="experience" value="none" checked /> Never</label>
+          <label><input type="radio" name="experience" value="some" /> A few times</label>
+          <label><input type="radio" name="experience" value="regular" /> Regularly</label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="f-notes">Anything we should know <span class="opt">(optional)</span></label>
+        <textarea id="f-notes" name="notes" rows="3"></textarea>
+      </div>
+
+      <button class="btn btn-buoy" type="submit">Request my free class</button>
+      <p class="status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  // Demo only: there is no backend. Validate in the browser and show a clear message.
+  const form = document.querySelector<HTMLFormElement>('[data-demo-form]');
+  if (form) {
+    // Native validation stays on without JS; this script takes over messaging.
+    form.noValidate = true;
+    const status = form.querySelector<HTMLElement>('.status')!;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fields = Array.from(form.querySelectorAll<HTMLInputElement>('input[required]'));
+      let firstBad: HTMLInputElement | null = null;
+      for (const f of fields) {
+        const ok = f.checkValidity() && f.value.trim() !== '';
+        f.setAttribute('aria-invalid', String(!ok));
+        if (!ok && !firstBad) firstBad = f;
+      }
+      if (firstBad) {
+        status.dataset.state = 'error';
+        status.textContent =
+          firstBad.type === 'email'
+            ? 'Enter an email address like name@example.com.'
+            : 'Enter your full name so we know who to expect.';
+        firstBad.focus();
+        return;
+      }
+      const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim().split(' ')[0];
+      status.dataset.state = 'ok';
+      status.textContent = `Thanks, ${name}. This is a demo form, so nothing was sent.`;
+      form.reset();
+      fields.forEach((f) => f.removeAttribute('aria-invalid'));
+    });
+  }
+</script>
+
+<style>
+  .book {
+    background: var(--paper-2);
+    border-top: 1px solid var(--rule);
+  }
+
+  .book-grid {
+    display: grid;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  @media (min-width: 56rem) {
+    .book-grid {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 4rem;
+    }
+  }
+
+  .pitch > p {
+    margin-top: 1rem;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--ink-soft);
+    max-width: 30rem;
+  }
+
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    max-width: 30rem;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 2.2rem 1fr;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+
+  .steps li::before {
+    content: counter(step);
+    display: grid;
+    place-items: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink);
+    font-family: var(--font-display);
+    align-self: start;
+  }
+
+  .form {
+    display: grid;
+    gap: 1.4rem;
+    padding: clamp(1.25rem, 0.75rem + 2vw, 2.25rem);
+    background: var(--surface);
+    border: 1.5px solid var(--ink);
+    border-radius: 10px;
+  }
+
+  .row.two {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  @media (min-width: 36rem) {
+    .row.two {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .field {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+  }
+
+  fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  label,
+  legend {
+    font-weight: 700;
+  }
+
+  legend {
+    padding: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .opt,
+  .hint {
+    font-weight: 400;
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+  }
+
+  input[type='text'],
+  input[type='email'],
+  select,
+  textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.65rem 0.8rem;
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1.5px solid var(--ink-soft);
+    border-radius: 6px;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    border-color: var(--kelp);
+    outline-offset: 1px;
+  }
+
+  input[aria-invalid='true'] {
+    border-color: #b3261e;
+    border-width: 2px;
+  }
+
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .choices label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.4rem 1rem 0.4rem 0.75rem;
+    border: 1.5px solid var(--rule);
+    border-radius: 999px;
+    font-weight: 400;
+    cursor: pointer;
+  }
+
+  .choices label:has(input:checked) {
+    border-color: var(--ink);
+    background: var(--paper-2);
+  }
+
+  .choices input {
+    accent-color: var(--kelp);
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0;
+  }
+
+  .form .btn {
+    justify-self: start;
+  }
+
+  .status {
+    min-height: 1.5em;
+    font-weight: 700;
+  }
+
+  .status[data-state='error'] {
+    color: #a3221b;
+  }
+
+  .status[data-state='ok'] {
+    color: var(--kelp);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    input[aria-invalid='true'] {
+      border-color: #ff8a80;
+    }
+    .status[data-state='error'] {
+      color: #ff9a90;
+    }
+  }
+</style>

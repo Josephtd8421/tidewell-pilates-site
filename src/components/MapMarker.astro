@@ -1,0 +1,50 @@
+---
+// Studio buoy marker with a leader line and label, for use inside an SVG map.
+interface Props {
+  x: number;
+  y: number;
+  /** Buoy radius; the dashed ring is drawn at twice this. */
+  r?: number;
+  label: string;
+  /** SVG path for the leader line, in the parent map's coordinates. */
+  leader: string;
+  labelX: number;
+  labelY: number;
+}
+const { x, y, r = 13, label, leader, labelX, labelY } = Astro.props;
+---
+<g class="map-marker">
+  <circle class="ring" cx={x} cy={y} r={r * 2} />
+  <circle class="buoy" cx={x} cy={y} r={r} />
+  <path class="band" d={`M${x - r} ${y}H${x + r}`} />
+  <path class="leader" d={leader} />
+  <text x={labelX} y={labelY}>{label}</text>
+</g>
+
+<style>
+  .ring {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 4;
+  }
+  .buoy {
+    fill: var(--buoy);
+    stroke: var(--ink);
+    stroke-width: 2.5;
+  }
+  .band {
+    stroke: var(--ink);
+    stroke-width: 4;
+  }
+  .leader {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+  text {
+    font-family: var(--font-display);
+    font-size: var(--marker-label-size, 20px);
+    fill: var(--ink);
+  }
+</style>

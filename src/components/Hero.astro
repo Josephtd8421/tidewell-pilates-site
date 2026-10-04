@@ -1,0 +1,244 @@
+---
+import { contours } from '../lib/contours';
+import MapMarker from './MapMarker.astro';
+
+const W = 560;
+const H = 620;
+const depth = contours({ cx: 370, cy: 430, rings: 9, r0: 26, step: 34, squash: 0.82, seed: 2.4 });
+
+// Chart border: alternating bars, like the latitude scale on a paper chart.
+const bars: { x: number; y: number; w: number; h: number }[] = [];
+const seg = 28;
+for (let x = 12, i = 0; x < W - 12; x += seg, i++) {
+  if (i % 2 === 0) {
+    const w = Math.min(seg, W - 12 - x);
+    bars.push({ x, y: 12, w, h: 8 }, { x, y: H - 20, w, h: 8 });
+  }
+}
+for (let y = 12, i = 0; y < H - 12; y += seg, i++) {
+  if (i % 2 === 0) {
+    const h = Math.min(seg, H - 12 - y);
+    bars.push({ x: 12, y, w: 8, h }, { x: W - 20, y, w: 8, h });
+  }
+}
+
+const soundings = [
+  [250, 260, '4'], [318, 300, '7'], [420, 268, '9'], [470, 340, '12'], [300, 380, '11'],
+  [210, 420, '8'], [380, 520, '18'], [470, 470, '16'], [260, 520, '13'], [150, 520, '9'],
+  [505, 505, '21'], [180, 330, '5'], [360, 430, '22'], [440, 400, '19'],
+] as const;
+---
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1 id="hero-title">Your first Pilates class is on us.</h1>
+      <p class="lede">
+        Small reformer and mat classes above Larkhaven harbor. Eight machines per class, teachers who learn
+        your name, and a timetable that starts at 6:30.
+      </p>
+      <div class="actions">
+        <a class="btn btn-buoy" href="#book">Book your free class</a>
+        <a class="btn btn-line" href="#timetable">See the timetable</a>
+      </div>
+      <p class="fine">For first-time visitors. Grip socks provided if you need them.</p>
+    </div>
+
+    <figure class="chart">
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="chart-title">
+        <title id="chart-title">Illustrated harbor chart of Larkhaven with the studio marked on Ropewalk Lane</title>
+        <defs>
+          <clipPath id="sea">
+            <rect x="28" y="28" width={W - 56} height={H - 56} />
+          </clipPath>
+        </defs>
+
+        <rect class="frame-bg" x="12" y="12" width={W - 24} height={H - 24} />
+        <rect class="sea" x="28" y="28" width={W - 56} height={H - 56} />
+
+        <g clip-path="url(#sea)">
+          <g class="depth">
+            {depth.map((d, i) => <path d={d} pathLength="1" style={`--i:${i}`} />)}
+          </g>
+
+          <!-- Land: headland along the top and west edge -->
+          <path
+            class="land"
+            d="M28 28H532V96C488 118 452 108 418 132C380 160 352 150 318 166C282 184 268 176 236 196C206 214 196 252 160 268C128 284 112 318 96 352C82 384 64 420 28 432Z"
+          />
+          <path
+            class="shore"
+            d="M532 96C488 118 452 108 418 132C380 160 352 150 318 166C282 184 268 176 236 196C206 214 196 252 160 268C128 284 112 318 96 352C82 384 64 420 28 432"
+          />
+          <!-- Quay and pier -->
+          <path class="pier" d="M236 196L276 250M276 250L300 238" />
+          <path class="pier" d="M318 166L352 214" />
+
+          <!-- Streets -->
+          <path class="street" d="M60 120C120 130 180 150 236 196" />
+          <path class="street" d="M150 60C170 110 196 150 220 190" />
+          <path class="street thin" d="M300 60C306 100 312 130 318 166" />
+
+          <g class="soundings">
+            {soundings.map(([x, y, t]) => <text x={x} y={y}>{t}</text>)}
+          </g>
+
+          <!-- Compass -->
+          <g class="compass" transform="translate(470 210)">
+            <circle r="30" />
+            <circle r="22" />
+            <path d="M0 -38L6 0L0 38L-6 0Z" />
+            <text y="-44" text-anchor="middle">N</text>
+          </g>
+
+          <text class="place" x="70" y="96">Larkhaven</text>
+          <text class="legend" x="516" y="578" text-anchor="end">Larkhaven Harbor, soundings in feet</text>
+        </g>
+
+        <MapMarker x={206} y={172} label="Tidewell Pilates" leader="M226 158L262 116H404" labelX={270} labelY={108} />
+
+        <rect class="frame" x="12" y="12" width={W - 24} height={H - 24} />
+        <rect class="frame" x="28" y="28" width={W - 56} height={H - 56} />
+        <g class="bars">
+          {bars.map((b) => <rect x={b.x} y={b.y} width={b.w} height={b.h} />)}
+        </g>
+      </svg>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5.5rem) clamp(3.5rem, 2rem + 5vw, 6.5rem);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .hero-grid {
+    display: grid;
+    gap: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 56rem) {
+    .hero-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+  }
+
+  h1 {
+    font-size: var(--step-4);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    max-width: 11ch;
+  }
+
+  .lede {
+    margin-top: 1.5rem;
+    font-size: var(--step-1);
+    line-height: 1.55;
+    max-width: 34rem;
+    color: var(--ink-soft);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 2rem;
+  }
+
+  .fine {
+    margin-top: 1.1rem;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+
+  .chart {
+    margin: 0;
+    width: 100%;
+    max-width: 34rem;
+    justify-self: center;
+  }
+
+  /* SVG styling */
+  .frame-bg {
+    fill: var(--surface);
+  }
+  .sea {
+    fill: var(--surface);
+  }
+  .frame {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+  .bars rect {
+    fill: var(--ink);
+  }
+  .depth path {
+    fill: none;
+    stroke: var(--kelp);
+    stroke-opacity: 0.55;
+    stroke-width: 1.2;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    animation: draw 2.2s cubic-bezier(0.3, 0.6, 0.2, 1) both;
+    animation-delay: calc(var(--i) * 90ms);
+  }
+  .depth path:nth-child(3n) {
+    stroke-width: 2;
+    stroke-opacity: 0.75;
+  }
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+  .land {
+    fill: var(--land);
+  }
+  .shore {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+  .pier {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 5;
+    stroke-linecap: square;
+  }
+  .street {
+    fill: none;
+    stroke: var(--surface);
+    stroke-width: 7;
+    stroke-linecap: round;
+  }
+  .street.thin {
+    stroke-width: 4;
+  }
+  .soundings text {
+    font: italic 15px var(--font-display);
+    fill: var(--ink-soft);
+  }
+  .compass circle {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1;
+  }
+  .compass path {
+    fill: var(--ink);
+  }
+  .compass text {
+    font: 14px var(--font-display);
+    fill: var(--ink);
+  }
+  .place {
+    font: 26px var(--font-display);
+    letter-spacing: 0.04em;
+    fill: var(--ink);
+  }
+  .legend {
+    font: italic 14px var(--font-display);
+    fill: var(--ink-soft);
+  }
+</style>
