@@ -1,0 +1,208 @@
+---
+import { studio, openingHours } from '../data/site';
+import { contours } from '../lib/contours';
+import MapMarker from './MapMarker.astro';
+
+const water = contours({ cx: 320, cy: 470, rings: 6, r0: 40, step: 34, squash: 0.45, seed: 5.1, points: 16 });
+---
+<section id="visit" class="section" aria-labelledby="visit-title">
+  <div class="wrap visit-grid">
+    <div class="info">
+      <h2 id="visit-title">Find the studio</h2>
+      <p class="intro">
+        Up the blue stairs at the end of Ropewalk Lane, above the chandlery. Two minutes from the Quayside car park.
+      </p>
+
+      <address>
+        <strong>{studio.name}</strong><br />
+        {studio.street}<br />
+        {studio.locality}<br />
+        <a href={studio.phone.href}>{studio.phone.label}</a><br />
+        <a href={`mailto:${studio.email}`}>{studio.email}</a>
+      </address>
+
+      <h3>Opening hours</h3>
+      <table class="hours">
+        <caption class="visually-hidden">Studio opening hours</caption>
+        <tbody>
+          {
+            openingHours.map((h) => (
+              <tr>
+                <th scope="row">{h.days}</th>
+                <td>{h.time}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <p class="small">Closed on public holidays. Reception opens 30 minutes before the first class.</p>
+    </div>
+
+    <figure class="map">
+      <svg viewBox="0 0 640 520" role="img" aria-labelledby="map-title">
+        <title id="map-title">Street map: the studio is at the harbor end of Ropewalk Lane, near the Quayside car park</title>
+        <rect class="ground" width="640" height="520" />
+        <path class="water" d="M0 360C90 340 150 372 230 352S380 300 460 320 580 360 640 340V520H0Z" />
+        <clipPath id="bay"><path d="M0 360C90 340 150 372 230 352S380 300 460 320 580 360 640 340V520H0Z" /></clipPath>
+        <g clip-path="url(#bay)" class="wcontours">{water.map((d) => <path d={d} />)}</g>
+
+        <!-- blocks -->
+        <g class="blocks">
+          <rect x="40" y="40" width="150" height="110" rx="4" />
+          <rect x="40" y="190" width="150" height="110" rx="4" />
+          <rect x="250" y="40" width="130" height="110" rx="4" />
+          <rect x="440" y="40" width="160" height="110" rx="4" />
+          <rect x="440" y="190" width="160" height="90" rx="4" />
+        </g>
+        <rect class="park" x="250" y="190" width="130" height="110" rx="4" />
+        <text class="park-label" x="315" y="258" text-anchor="middle">P</text>
+
+        <!-- streets -->
+        <g class="streets">
+          <path d="M0 170H640" />
+          <path d="M220 0V330" />
+          <path d="M410 0V320" />
+        </g>
+        <path class="quay" d="M0 335C90 318 150 345 230 328S380 280 460 298 580 336 640 316" />
+        <path class="pier" d="M300 312V420M300 420H340" />
+
+        <text class="street-label" x="70" y="164">Harbor Street</text>
+        <text class="street-label" transform="translate(404 26) rotate(90)">Ropewalk Lane</text>
+        <text class="street-label" x="60" y="322">Quayside</text>
+        <text class="water-label" x="400" y="450">Larkhaven Harbor</text>
+
+        <MapMarker x={410} y={290} r={15} label="Harbor Pilates" leader="M428 270L452 242H600" labelX={458} labelY={232} />
+      </svg>
+      <figcaption class="small">Illustrated map, not to scale.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .visit-grid {
+    display: grid;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  @media (min-width: 56rem) {
+    .visit-grid {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 4rem;
+    }
+  }
+
+  .intro {
+    margin-top: 1rem;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  address {
+    font-style: normal;
+    margin-top: 2rem;
+    line-height: 1.7;
+  }
+
+  h3 {
+    margin-top: 2.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .hours {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 26rem;
+  }
+
+  .hours th,
+  .hours td {
+    text-align: left;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-weight: 400;
+  }
+
+  .hours td {
+    text-align: right;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .small {
+    margin-top: 0.85rem;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+
+  .map {
+    margin: 0;
+  }
+
+  .map svg {
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    width: 100%;
+    height: auto;
+  }
+
+  .ground {
+    fill: var(--land);
+  }
+  .blocks rect {
+    fill: var(--land-2);
+  }
+  .park {
+    fill: var(--surface);
+    stroke: var(--ink-soft);
+    stroke-dasharray: 5 5;
+  }
+  .park-label {
+    font: 700 34px var(--font-body);
+    fill: var(--ink-soft);
+  }
+  .streets path {
+    stroke: var(--surface);
+    stroke-width: 22;
+    fill: none;
+  }
+  .water {
+    fill: var(--surface);
+  }
+  .wcontours path {
+    fill: none;
+    stroke: var(--kelp);
+    stroke-opacity: 0.5;
+    stroke-width: 1.3;
+  }
+  .quay {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2.5;
+  }
+  .pier {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 7;
+  }
+  .street-label {
+    font: 15px var(--font-body);
+    fill: var(--ink-soft);
+  }
+  .water-label {
+    font: italic 18px var(--font-display);
+    fill: var(--ink-soft);
+  }
+
+  @media (max-width: 40rem) {
+    .street-label {
+      font-size: 21px;
+    }
+    .water-label {
+      font-size: 22px;
+    }
+    .map {
+      --marker-label-size: 22px;
+    }
+  }
+</style>

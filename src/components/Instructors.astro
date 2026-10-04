@@ -1,0 +1,85 @@
+---
+import { instructors } from '../data/site';
+import Avatar from './Avatar.astro';
+---
+<section id="teachers" class="section" aria-labelledby="teachers-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="teachers-title">The people teaching</h2>
+      <p>Four teachers, each trained on both reformer and mat. You will see the same faces every week.</p>
+    </div>
+
+    <ul class="team">
+      {
+        instructors.map((p, i) => (
+          <li>
+            <Avatar variant={i as 0 | 1 | 2 | 3} />
+            <h3>{p.name}</h3>
+            <p class="role">{p.role}</p>
+            <p class="bio">{p.bio}</p>
+            <p class="teaches">Teaches {p.teaches}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="note">Portraits are abstract illustrations. Teachers and bios are invented for this sample.</p>
+  </div>
+</section>
+
+<style>
+  .team {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14.5rem), 1fr));
+    gap: 2.5rem 1.75rem;
+  }
+
+  li {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+  }
+
+  li :global(.avatar) {
+    margin-bottom: 1rem;
+    max-width: 15rem;
+  }
+
+  @media (max-width: 35.99rem) {
+    li {
+      grid-template-columns: 6.5rem 1fr;
+      column-gap: 1.1rem;
+    }
+    li :global(.avatar) {
+      grid-row: span 4;
+      margin-bottom: 0;
+    }
+  }
+
+  h3 {
+    font-size: var(--step-2);
+  }
+
+  .role {
+    color: var(--kelp);
+    font-weight: 700;
+  }
+
+  .bio {
+    margin-top: 0.35rem;
+  }
+
+  .teaches {
+    margin-top: 0.5rem;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+
+  .note {
+    margin-top: 2.5rem;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+</style>

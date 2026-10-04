@@ -1,0 +1,77 @@
+---
+import { studio, navLinks } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap foot">
+    <div class="brand">
+      <p class="name">Harbor Pilates</p>
+      <p>{studio.street}, {studio.locality}</p>
+    </div>
+    <nav aria-label="Footer">
+      <ul>
+        {navLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        <li><a href="#book">Book a free class</a></li>
+      </ul>
+    </nav>
+    <p class="disclaimer">
+      Harbor Pilates and Larkhaven are invented for a portfolio sample designed and built by Joe Dymnioski, {year}.
+      Names, prices, reviews and contact details are fictional.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--band);
+    color: var(--band-ink);
+    padding-block: 3.5rem 2.5rem;
+  }
+
+  .foot {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 48rem) {
+    .foot {
+      grid-template-columns: 1fr auto;
+    }
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    margin-bottom: 0.4rem;
+  }
+
+  .brand p:last-child {
+    color: var(--band-soft);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+  }
+
+  a {
+    display: inline-block;
+    padding-block: 0.4rem;
+  }
+
+  a:focus-visible {
+    outline-color: var(--buoy);
+  }
+
+  .disclaimer {
+    grid-column: 1 / -1;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--band-rule);
+    font-size: var(--step--1);
+    color: var(--band-soft);
+  }
+</style>

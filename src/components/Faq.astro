@@ -1,0 +1,114 @@
+---
+import { faqs } from '../data/site';
+---
+<section id="faq" class="section faq" aria-labelledby="faq-title">
+  <div class="wrap faq-grid">
+    <div>
+      <h2 id="faq-title">Questions before your first class</h2>
+      <p class="aside">Something not covered here? Call the front desk or add a note to your booking request.</p>
+    </div>
+    <div class="items">
+      {
+        faqs.map((f) => (
+          <details>
+            <summary>
+              <span>{f.q}</span>
+              <span class="sign" aria-hidden="true" />
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    border-top: 1px solid var(--rule);
+  }
+
+  .faq-grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 56rem) {
+    .faq-grid {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 4rem;
+    }
+  }
+
+  .aside {
+    margin-top: 1rem;
+    color: var(--ink-soft);
+    max-width: 24rem;
+  }
+
+  .items {
+    border-top: 2px solid var(--ink);
+  }
+
+  details {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.2rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    font-size: var(--step-1);
+    line-height: 1.35;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:hover span:first-child {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .sign {
+    flex: none;
+    position: relative;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+  }
+
+  .sign::before,
+  .sign::after {
+    content: '';
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 0.8rem;
+    height: 2px;
+    background: var(--ink);
+    translate: -50% -50%;
+    transition: rotate 200ms ease;
+  }
+
+  .sign::after {
+    rotate: 90deg;
+  }
+
+  details[open] .sign::after {
+    rotate: 0deg;
+  }
+
+  details p {
+    padding: 0 3rem 1.5rem 0;
+    max-width: 40rem;
+    color: var(--ink-soft);
+  }
+</style>

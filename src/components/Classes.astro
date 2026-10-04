@@ -1,0 +1,108 @@
+---
+import { classTypes } from '../data/site';
+const paceLabel = { 1: 'Gentle pace', 2: 'Steady pace', 3: 'Brisk pace' } as const;
+---
+<section id="classes" class="section" aria-labelledby="classes-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="classes-title">Five classes, one small room</h2>
+      <p>Every class works the whole body. They differ in equipment, pace and how much is explained along the way.</p>
+    </div>
+
+    <ul class="class-list">
+      {
+        classTypes.map((c) => (
+          <li class="class-row">
+            <h3>{c.name}</h3>
+            <p class="meta">
+              <span>{c.equipment}</span>
+              <span>{c.length}</span>
+              <span class="pace">
+                <svg viewBox="0 0 54 12" width="54" height="12" aria-hidden="true">
+                  {[0, 1, 2].map((i) => (
+                    <path
+                      d={`M${i * 18 + 1} 8c3-5 6-5 8 0s5 5 8 0`}
+                      class={i < c.pace ? 'on' : 'off'}
+                    />
+                  ))}
+                </svg>
+                {paceLabel[c.pace]}
+              </span>
+            </p>
+            <p class="blurb">{c.blurb}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .class-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 2px solid var(--ink);
+  }
+
+  .class-row {
+    display: grid;
+    gap: 0.4rem 2rem;
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  @media (min-width: 48rem) {
+    .class-row {
+      grid-template-columns: minmax(14rem, 1fr) minmax(0, 1.5fr);
+      grid-template-areas:
+        'name blurb'
+        'meta blurb';
+      align-items: start;
+      padding-block: 1.9rem;
+    }
+    .class-row h3 {
+      grid-area: name;
+    }
+    .meta {
+      grid-area: meta;
+    }
+    .blurb {
+      grid-area: blurb;
+    }
+  }
+
+  h3 {
+    font-size: var(--step-2);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.1rem;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+
+  .pace {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .pace path {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .pace .on {
+    stroke: var(--kelp);
+  }
+  .pace .off {
+    stroke: var(--rule);
+  }
+
+  .blurb {
+    max-width: 38rem;
+  }
+</style>

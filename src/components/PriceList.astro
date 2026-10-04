@@ -1,0 +1,81 @@
+---
+import type { PriceLine } from '../data/site';
+
+interface Props {
+  title: string;
+  items: PriceLine[];
+  unit?: string;
+}
+const { title, items, unit } = Astro.props;
+---
+<div class="list">
+  <h3>{title}</h3>
+  <ul>
+    {
+      items.map((p) => (
+        <li>
+          <span class="name">{p.name}</span>
+          <span class="leader" aria-hidden="true" />
+          <span class="price">
+            {p.price}
+            {unit && <small>{unit}</small>}
+          </span>
+          <span class="detail">{p.detail}</span>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  h3 {
+    font-size: var(--step-2);
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 0 0.6rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .name {
+    font-weight: 700;
+    font-size: var(--step-1);
+  }
+
+  .leader {
+    border-bottom: 2px dotted var(--ink-soft);
+    opacity: 0.6;
+    transform: translateY(-0.3em);
+  }
+
+  .price {
+    font-weight: 700;
+    font-size: var(--step-1);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .price small {
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+    margin-left: 0.1rem;
+  }
+
+  .detail {
+    grid-column: 1 / -1;
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+  }
+</style>
