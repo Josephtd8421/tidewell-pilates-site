@@ -86,7 +86,7 @@ const soundings = [
           <g class="compass" transform="translate(470 210)">
             <circle r="30" />
             <circle r="22" />
-            <path d="M0 -38L6 0L0 38L-6 0Z" />
+            <path class="needle" d="M0 -38L6 0L0 38L-6 0Z" />
             <text y="-44" text-anchor="middle">N</text>
           </g>
 
@@ -94,7 +94,7 @@ const soundings = [
           <text class="legend" x="516" y="578" text-anchor="end">Larkhaven Harbor, soundings in feet</text>
         </g>
 
-        <MapMarker x={206} y={172} label="Tidewell Pilates" leader="M226 158L262 116H404" labelX={270} labelY={108} />
+        <MapMarker x={206} y={172} label="Tidewell Pilates" leader="M226 158L262 116H404" labelX={270} labelY={108} bob />
 
         <rect class="frame" x="12" y="12" width={W - 24} height={H - 24} />
         <rect class="frame" x="28" y="28" width={W - 56} height={H - 56} />
@@ -227,6 +227,27 @@ const soundings = [
   }
   .compass path {
     fill: var(--ink);
+  }
+  /* Needle swings past north and settles while the contours draw. Starts in
+     view, so it rotates rather than fades: nothing is hidden before paint. */
+  @media (prefers-reduced-motion: no-preference) {
+    .needle {
+      animation: needle-settle 1.8s cubic-bezier(0.25, 0.7, 0.3, 1) 0.3s both;
+    }
+  }
+  @keyframes needle-settle {
+    0% {
+      transform: rotate(-28deg);
+    }
+    45% {
+      transform: rotate(7deg);
+    }
+    72% {
+      transform: rotate(-2.5deg);
+    }
+    100% {
+      transform: rotate(0);
+    }
   }
   .compass text {
     font: 14px var(--font-display);

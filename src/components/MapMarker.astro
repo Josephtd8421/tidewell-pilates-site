@@ -10,13 +10,17 @@ interface Props {
   leader: string;
   labelX: number;
   labelY: number;
+  /** Let the buoy bob gently while on screen. Use on one marker per page at most. */
+  bob?: boolean;
 }
-const { x, y, r = 13, label, leader, labelX, labelY } = Astro.props;
+const { x, y, r = 13, label, leader, labelX, labelY, bob = false } = Astro.props;
 ---
-<g class="map-marker">
+<g class="map-marker" data-ambient={bob ? 'off' : undefined}>
   <circle class="ring" cx={x} cy={y} r={r * 2} />
-  <circle class="buoy" cx={x} cy={y} r={r} />
-  <path class="band" d={`M${x - r} ${y}H${x + r}`} />
+  <g class="float">
+    <circle class="buoy" cx={x} cy={y} r={r} />
+    <path class="band" d={`M${x - r} ${y}H${x + r}`} />
+  </g>
   <path class="leader" d={leader} />
   <text x={labelX} y={labelY}>{label}</text>
 </g>
@@ -41,6 +45,26 @@ const { x, y, r = 13, label, leader, labelX, labelY } = Astro.props;
     fill: none;
     stroke: var(--ink);
     stroke-width: 1.5;
+  }
+  /* Slow enough to read as water, not as a loading indicator. Runs only while
+     motion.ts reports the marker on screen. */
+  .float {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-ambient='on'] .float {
+      animation: buoy-bob 7s ease-in-out infinite;
+    }
+  }
+  @keyframes buoy-bob {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-2deg);
+    }
+    50% {
+      transform: translateY(-2px) rotate(2deg);
+    }
   }
   text {
     font-family: var(--font-display);
